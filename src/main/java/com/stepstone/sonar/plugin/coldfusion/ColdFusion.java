@@ -19,6 +19,8 @@ package com.stepstone.sonar.plugin.coldfusion;
 import org.sonar.api.config.Configuration;
 import org.sonar.api.resources.AbstractLanguage;
 
+import java.util.Objects;
+
 public class ColdFusion extends AbstractLanguage {
 
     private final Configuration configuration;
@@ -30,6 +32,7 @@ public class ColdFusion extends AbstractLanguage {
 
     @Override
     public String[] getFileSuffixes() {
+
         return configuration.getStringArray(ColdFusionPlugin.FILE_SUFFIXES_KEY);
     }
 
@@ -47,7 +50,9 @@ public class ColdFusion extends AbstractLanguage {
 
         ColdFusion that = (ColdFusion) o;
 
-        return !(configuration != null ? !configuration.equals(that.configuration) : that.configuration != null);
+        return !( configuration != null ? !Objects.equals(configuration, that.configuration) : that.configuration != null );
+
+        //return !(configuration != null ? !configuration.equals(that.configuration) : that.configuration != null);
 
     }
 

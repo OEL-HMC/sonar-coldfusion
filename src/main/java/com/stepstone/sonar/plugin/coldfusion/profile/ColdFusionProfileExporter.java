@@ -19,8 +19,11 @@ package com.stepstone.sonar.plugin.coldfusion.profile;
 import com.stepstone.sonar.plugin.coldfusion.ColdFusionPlugin;
 import com.stepstone.sonar.plugin.coldfusion.errors.ColdFusionPluginException;
 import com.stepstone.sonar.plugin.coldfusion.cflint.CFLintConfigExporter;
+import org.sonar.api.batch.rule.ActiveRule;
+import org.sonar.api.batch.rule.ActiveRules;
 import org.sonar.api.profiles.ProfileExporter;
 import org.sonar.api.profiles.RulesProfile;
+
 
 import javax.xml.stream.XMLStreamException;
 import java.io.Writer;
@@ -33,14 +36,22 @@ public class ColdFusionProfileExporter extends ProfileExporter {
     }
 
     @Override
-    public void exportProfile(RulesProfile ruleProfile, Writer writer) {
+    public void exportProfile(RulesProfile rule, Writer writer) {
 
         try {
-            new CFLintConfigExporter(ruleProfile).save(writer);
+            new CFLintConfigExporter(rule.getActiveRulesByRepository(ColdFusionPlugin.REPOSITORY_KEY)).save(writer);
         } catch (XMLStreamException e) {
             throw new ColdFusionPluginException("Could not export coldfusion-cflint profile", e);
         }
 
+    }
+
+    public void exportProfile(ActiveRules rules, Writer writer){
+        try {
+            new CFLintConfigExporter(rules.findByRepository( ColdFusionPlugin.REPOSITORY_KEY ) ).save(writer);
+        } catch (XMLStreamException e) {
+            throw new ColdFusionPluginException("Could not export coldfusion-cflint profile", e);
+        }
     }
 
 }

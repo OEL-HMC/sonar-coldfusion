@@ -22,11 +22,13 @@ import com.stepstone.sonar.plugin.coldfusion.cflint.CFLintAnalysisResultImporter
 import com.stepstone.sonar.plugin.coldfusion.cflint.CFLintConfigExporter;
 import org.sonar.api.batch.fs.FileSystem;
 import org.sonar.api.batch.fs.InputFile;
+import org.sonar.api.batch.rule.ActiveRules;
+
 import org.sonar.api.batch.sensor.Sensor;
 import org.sonar.api.batch.sensor.SensorContext;
 import org.sonar.api.batch.sensor.SensorDescriptor;
 import org.sonar.api.measures.CoreMetrics;
-import org.sonar.api.profiles.RulesProfile;
+
 import org.sonar.api.utils.log.Logger;
 import org.sonar.api.utils.log.Loggers;
 
@@ -48,15 +50,21 @@ import java.util.regex.Pattern;
 public class ColdFusionSensor implements Sensor {
 
     private final FileSystem fs;
-    private final RulesProfile ruleProfile;
+    //private final RulesProfile ruleProfile;
+    private final ActiveRules rules;
     private final Logger logger = Loggers.get(ColdFusionSensor.class);
 
-    public ColdFusionSensor(FileSystem fs, RulesProfile ruleProfile) {
+
+
+    public ColdFusionSensor(
+        FileSystem fs,
+        ActiveRules rules
+    ) {
         Preconditions.checkNotNull(fs);
-        Preconditions.checkNotNull(ruleProfile);
+        Preconditions.checkNotNull(rules);
 
         this.fs = fs;
-        this.ruleProfile = ruleProfile;
+        this.rules = rules;
     }
 
 
@@ -89,7 +97,7 @@ public class ColdFusionSensor implements Sensor {
 
     private File generateCflintConfig() throws IOException, XMLStreamException {
         final File configFile = new File(fs.workDir(), "cflint-config.xml");
-        new CFLintConfigExporter(ruleProfile).save(configFile);
+        new CFLintConfigExporter( this.rules.findByRepository(ColdFusionPlugin.REPOSITORY_KEY) ).save(configFile);
         return configFile;
     }
 

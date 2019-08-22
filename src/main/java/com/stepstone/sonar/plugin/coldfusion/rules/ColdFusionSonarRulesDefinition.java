@@ -39,6 +39,7 @@ public class ColdFusionSonarRulesDefinition implements RulesDefinition {
 
     @Override
     public void define(Context context) {
+
         NewRepository repository = context
                 .createRepository(ColdFusionPlugin.REPOSITORY_KEY, ColdFusionPlugin.LANGUAGE_KEY)
                 .setName(ColdFusionPlugin.REPOSITORY_NAME);
